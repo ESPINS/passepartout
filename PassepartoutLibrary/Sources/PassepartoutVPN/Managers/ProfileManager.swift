@@ -23,6 +23,7 @@
 //  along with Passepartout.  If not, see <http://www.gnu.org/licenses/>.
 //
 
+import SwiftOTP
 import Combine
 import Foundation
 import PassepartoutCore
@@ -279,13 +280,28 @@ extension ProfileManager {
 // MARK: Keychain
 
 extension ProfileManager {
+    public func getPasswordWithOtpKey(forProfile profile: Profile) -> String {
+        if !profile.account.otpKey.isEmpty {
+            if let secret = base32DecodeToData(profile.account.otpKey) {
+                if let totp = TOTP(secret: secret, digits: 6, timeInterval: 30, algorithm: .sha256) {
+                    let date = Date()
+                    if let otpString = totp.generate(time: date) {
+                        return profile.account.password + otpString
+                    }
+                }
+            }
+        }
+
+        return profile.account.password
+    }
+
     public func savePassword(forProfile profile: Profile, newPassword: String? = nil) {
         guard !profile.isPlaceholder else {
             assertionFailure("Placeholder")
             return
         }
         let entry = keychainEntry(profile)
-        let password = newPassword ?? profile.account.password
+        let password = newPassword ?? getPasswordWithOtpKey(forProfile: profile)
         guard !password.isEmpty else {
             keychain.removePassword(
                 for: entry,

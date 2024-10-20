@@ -32,6 +32,8 @@ struct AccountView: View {
 
         case password
 
+        case otpKey
+
         case seed
     }
 
@@ -93,6 +95,11 @@ struct AccountView: View {
                         themeSecureField(L10n.Account.Items.Password.placeholder, text: $liveAccount.password)
                             .focused($focusedField, equals: .password)
                             .withLeadingText(L10n.Account.Items.Password.caption)
+                        if vpnProtocol == .openVPN {
+                            themeSecureField(L10n.Account.Items.Password.placeholder, text: $liveAccount.otpKey)
+                                .focused($focusedField, equals: .otpKey)
+                                .withLeadingText("OTPKey")
+                        }
                     }
 
                 case .totp:

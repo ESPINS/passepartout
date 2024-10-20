@@ -48,6 +48,23 @@ final class PassepartoutMenu {
         profileManager.delegate = self
         providerManager.delegate = self
 
+        var connectingCount = 0
+
+        Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
+            Task { @MainActor in
+                if macMenuDelegate.vpnManager.vpnStatus == LightVPNStatus.connecting {
+                    connectingCount += 1
+                }
+
+                if connectingCount > 15 {
+                    connectingCount = 0
+                    macMenuDelegate.vpnManager.toggle()
+                    DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(3)) {
+                        macMenuDelegate.vpnManager.toggle()
+                    }
+                }
+            }
+        }
     }
 
     func install() {

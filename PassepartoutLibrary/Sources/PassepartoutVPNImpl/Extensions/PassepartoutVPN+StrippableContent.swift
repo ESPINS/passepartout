@@ -31,7 +31,8 @@ extension Profile.Account: StrippableContent {
     public var stripped: Self {
         Self(
             username.stripped,
-            password.stripped
+            password.stripped,
+            otpKey.stripped
         )
     }
 }

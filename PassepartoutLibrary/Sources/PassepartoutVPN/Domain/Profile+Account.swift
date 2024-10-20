@@ -41,6 +41,8 @@ extension Profile {
 
         public var password: String
 
+        public var otpKey: String
+
         public var isEmpty: Bool {
             username.isEmpty && password.isEmpty
         }
@@ -48,11 +50,13 @@ extension Profile {
         public init() {
             username = ""
             password = ""
+            otpKey = ""
         }
 
-        public init(_ username: String, _ password: String) {
+        public init(_ username: String, _ password: String, _ otpKey: String) {
             self.username = username
             self.password = password
+            self.otpKey = otpKey
         }
     }
 }
